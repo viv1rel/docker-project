@@ -7,4 +7,57 @@ services:
     ports:
       - 80:80
     volumes:
+<<<<<<< HEAD
       - ./html:/usr/share/nginx/html
+=======
+      - ./www:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - app
+
+  php:
+    build:
+      context: ./docker/php
+    volumes:
+      - ./www:/var/www/html
+    environment:
+      - DB_HOST=mysql
+    networks:
+      - app
+
+  node:
+    build:
+      context: ./www
+      dockerfile: ../docker/node/Dockerfile
+    container_name: node-app
+    volumes:
+      - ./www:/app
+    ports:
+      - "3000:3000"
+    command: npm run dev
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_con
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  mysql_data:
+>>>>>>> 5f650d6 (Added authorization and registration)
